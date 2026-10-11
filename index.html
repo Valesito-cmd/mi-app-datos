@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión - Asambleas de Dios</title>
+    <!-- Librería Chart.js para las Gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .logo-container img {
+            max-width: 150px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        p.subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dcdde1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            width: 100%;
+            padding: 11px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #219150;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        aside .logo-small {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        aside .logo-small img {
+            max-width: 100px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        aside nav button {
+            background: transparent;
+            color: #bdc3c7;
+            text-align: left;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-weight: normal;
+        }
+
+        aside nav button:hover, aside nav button.active {
+            background-color: #34495e;
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            max-width: 1200px;
+        }
+
+        .section-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .calendar-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .calendar-controls select {
+            width: auto;
+            padding: 6px 10px;
+        }
+
+        .calendar-controls button {
+            padding: 6px 12px;
+            font-size: 13px;
+            width: auto;
+            background-color: #34495e;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            background: #eef1f5;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .cal-day-head {
+            font-weight: bold;
+            color: #2c3e50;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .cal-day-cell {
+            background: white;
+            border-radius: 6px;
+            padding: 8px 4px;
+            min-height: 55px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 13px;
+            font-weight: 600;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .cal-day-cell:hover {
+            background-color: #e3f2fd;
+        }
+
+        .cal-day-cell.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .cal-day-cell.today {
+            border: 2px solid #f39c12;
+            background-color: #fef9e7;
+        }
+
+        .badge-dots {
+            display: flex;
+            gap: 3px;
+            margin-top: 4px;
+        }
+
+        .dot-event { width: 7px; height: 7px; background-color: #3498db; border-radius: 50%; }
+        .dot-cumple { width: 7px; height: 7px; background-color: #e74c3c; border-radius: 50%; }
+
+        .fin-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .fin-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .fin-card.green { border-left-color: #27ae60; }
+        .fin-card.red { border-left-color: #e74c3c; }
+
+        @media (max-width: 768px) {
+            .dashboard-container { flex-direction: column; }
+            aside { width: 100%; height: auto; }
+            .grid-2, .fin-cards { grid-template-columns: 1fr; }
+            .calendar-header { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. PANTALLA DE INICIO DE SESIÓN -->
+    <div id="login-screen" class="login-wrapper">
+        <div class="card">
+            <div class="logo-container">
+                <img src="logotipo asamblea de Dios.png" alt="Logotipo Asambleas de Dios">
+            </div>
+            <h2>Iglesia Asambleas de Dios</h2>
+            <p class="subtitle">Inicie sesión para acceder al sistema</p>
+            
+            <div id="login-error" class="error-message hidden">Usuario o contraseña incorrectos</div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Usuario administrador" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit">Ingresar</button>
+            </form>
+            <p style="font-size:11px; color:#95a5a6; margin-top:15px;">
+                (Usuario: <b>vale</b> | Clave: <b>1234</b>)
+            </p>
+        </div>
+    </div>
+
+    <!-- 2. PANEL PRINCIPAL -->
+    <div id="dashboard-screen" class="dashboard-container hidden">
+        <aside>
+            <div>
+                <div class="logo-small">
+                    <img src="logotipo asamblea de Dios.png" alt="Logo">
+                    <h3 style="font-size: 14px; color: #fff;" id="user-display">Admin</h3>
+                </div>
+                <nav>
+                    <button onclick="cambiarSeccion('miembros')" id="nav-miembros" class="active">👥 Miembros</button>
+                    <button onclick="cambiarSeccion('calendario')" id="nav-calendario">📅 Calendario</button>
+                    <button onclick="cambiarSeccion('finanzas')" id="nav-finanzas">💰 Finanzas</button>
+                    <button onclick="cambiarSeccion('configuracion')" id="nav-configuracion">⚙️ Configuración</button>
+                </nav>
+            </div>
+            <button onclick="cerrarSesion()" style="background-color: #e74c3c;">Cerrar Sesión</button>
+        </aside>
+
+        <main>
+            <!-- SECCIÓN MIEMBROS -->
+            <section id="sec-miembros" class="section-content">
+                <h2>Gestión de Miembros</h2>
+                <p class="subtitle">Registro detallado de datos personales y familiares de la congregación</p>
+
+                <div class="grid-2" style="align-items: start;">
+                    <form id="form-miembro" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3 style="font-size: 15px; margin-bottom: 12px; color: #2c3e50;">Registrar Nuevo Miembro</h3>
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="m-nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Primer Apellido</label>
+                            <input type="text" id="m-apellido1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Segundo Apellido</label>
+                            <input type="text" id="m-apellido2">
+                        </div>
+                        <div class="form-group">
+                            <label>Cédula</label>
+                            <input type="text" id="m-cedula" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sexo</label>
+                            <select id="m-sexo">
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Nacimiento</label>
+                            <input type="date" id="m-nacimiento" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado Civil</label>
+                            <select id="m-estado-civil" onchange="verificarEstadoCivil()">
+                                <option value="Soltero/a">Soltero/a</option>
+                                <option value="Casado/a">Casado/a</option>
+                            </select>
+                        </div>
+                        <div class="form-group hidden" id="grupo-conyuge">
+                            <label>Nombre y Apellido del Cónyuge</label>
+                            <input type="text" id="m-conyuge" placeholder="Nombre completo del cónyuge">
+                        </div>
+                        <div class="form-group">
+                            <label>¿Nacido en la iglesia?</label>
+                            <select id="m-nacido-iglesia">
+                                <option value="Sí">Sí</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <button type="submit" style="background-color: #3498db;">Guardar Miembro</button>
+                    </form>
+
+                    <div>
+                        <h3 style="font-size: 15px; margin-bottom: 12px; color: #2c3e50;">Lista de Miembros Registrados</h3>
+                        <div style="overflow-x: auto;">
+                            <table>
+                               <thead>
+                                   <tr>
+                                       <th>Nombre y Apellidos</th>
+                                       <th>Cédula</th>
+                                       <th>Edad</th>
+                                       <th>Estado Civil / Cónyuge</th>
+                                   </tr>
+                               </thead>
+                               <tbody id="tabla-miembros"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN CALENDARIO -->
+            <section id="sec-calendario" class="section-content hidden">
+                <h2>Calendario Interactivo de Eventos</h2>
+                <p class="subtitle">Consulte días, meses y años para gestionar eventos y ver cumpleaños</p>
+
+                <div class="grid-2" style="align-items: start; margin-bottom: 20px;">
+                    <div>
+                        <div class="calendar-header">
+                            <h3 id="cal-title" style="color: #2c3e50;">Mes / Año</h3>
+                            <div class="calendar-controls">
+                                <button onclick="moverMes(-1)">◀ Ant</button>
+                                <select id="select-mes" onchange="cambiarMesAnioDirecto()"></select>
+                                <select id="select-anio" onchange="cambiarMesAnioDirecto()"></select>
+                                <button onclick="moverMes(1)">Sig ▶</button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid"></div>
+                        <div style="display: flex; gap: 15px; margin-top: 10px; font-size: 12px; justify-content: center;">
+                            <span><span style="color:#3498db; font-size:16px;">●</span> Eventos</span>
+                            <span><span style="color:#e74c3c; font-size:16px;">●</span> Cumpleaños</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <form id="form-evento" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h3 style="font-size: 15px; margin-bottom: 12px; color: #2c3e50;">Registrar Nuevo Evento</h3>
+                            <div class="form-group">
+                                <label>Título del Evento</label>
+                                <input type="text" id="ev-titulo" placeholder="Ej: Culto Especial, Vigilia" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha del Evento</label>
+                                <input type="date" id="ev-fecha" required>
+                            </div>
+                            <button type="submit" style="background-color: #27ae60;">Guardar en Calendario</button>
+                        </form>
+
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <h3 style="font-size: 15px; margin-bottom: 10px; color: #2c3e50;" id="detalle-fecha-titulo">Actividades del Mes</h3>
+                            <div id="lista-detalles-dia" style="max-height: 180px; overflow-y: auto; font-size: 13px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN FINANZAS -->
+            <section id="sec-finanzas" class="section-content hidden">
+                <h2>Control Financiero</h2>
+                <p class="subtitle">Entradas, salidas configurables y gráfica lineal de tendencia temporal</p>
+
+                <div class="fin-cards">
+                    <div class="fin-card green">
+                        <h4 style="font-size: 13px; color: #7f8c8d;">Total Entradas</h4>
+                        <p id="res-entradas" style="font-size: 22px; font-weight: bold; color: #27ae60;">$0.00</p>
+                    </div>
+                    <div class="fin-card red">
+                        <h4 style="font-size: 13px; color: #7f8c8d;">Total Salidas</h4>
+                        <p id="res-salidas" style="font-size: 22px; font-weight: bold; color: #e74c3c;">$0.00</p>
+                    </div>
+                    <div class="fin-card">
+                        <h4 style="font-size: 13px; color: #7f8c8d;">Balance Disponible</h4>
+                        <p id="res-balance" style="font-size: 22px; font-weight: bold; color: #2c3e50;">$0.00</p>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="align-items: start; margin-bottom: 25px;">
+                    <!-- REGISTRO DE ENTRADA -->
+                    <form id="form-entrada" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3 style="font-size: 15px; margin-bottom: 12px; color: #2c3e50;">➕ Registrar Entrada</h3>
+                        <div class="form-group">
+                            <label>Tipo de Entrada</label>
+                            <select id="en-tipo" onchange="verificarTipoEntrada()">
+                                <option value="Diezmo">Diezmo</option>
+                                <option value="Ofrenda">Ofrenda</option>
+                                <option value="Donación">Donación Especial</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="grupo-diezmo-persona">
+                            <label>Seleccionar Miembro (Diezmante)</label>
+                            <select id="en-persona-select"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Monto ($)</label>
+                            <input type="number" step="0.01" id="en-monto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="en-fecha" required>
+                        </div>
+                        <button type="submit" style="background-color: #27ae60;">Guardar Entrada</button>
+                    </form>
+
+                    <!-- REGISTRO DE SALIDA -->
+                    <form id="form-salida" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <h3 style="font-size: 15px; margin-bottom: 12px; color: #2c3e50;">➖ Registrar Salida / Gasto</h3>
+                        <div class="form-group">
+                            <label>Concepto / Destino de Salida</label>
+                            <input type="text" id="sal-concepto-input" placeholder="Ej: Pago UTE, Sueldo Pastor, Mantenimiento" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de Modalidad / Frecuencia</label>
+                            <select id="sal-tipo-frecuencia" onchange="actualizarModoSalida()">
+                                <option value="unica">Pago Único (Mes actual)</option>
+                                <option value="fija_mismo_monto">Recurrente Fijo (Todos los meses - Mismo monto)</option>
+                                <option value="fija_distinto_monto">Recurrente Variable (Todos los meses - Editar monto)</option>
+                                <option value="cuotas">Pago en Cuotas</option>
+                            </select>
+                        </div>
+                        <div class="form-group hidden" id="grupo-num-cuotas">
+                            <label>Cantidad de Cuotas / Meses</label>
+                            <input type="number" id="sal-cuotas" value="1" min="1" max="36">
+                        </div>
+                        <div class="form-group">
+                            <label>Monto ($)</label>
+                            <input type="number" step="0.01" id="sal-monto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de Registro</label>
+                            <input type="date" id="sal-fecha" required>
+                        </div>
+                        <button type="submit" style="background-color: #e74c3c;">Guardar Salida</button>
+                    </form>
+                </div>
+
+                <!-- GRÁFICA LINEAL DE TENDENCIA TEMPORAL -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                    <h3 style="font-size: 15px; margin-bottom: 15px; color: #2c3e50;">📈 Tendencia Financiera (Entradas al alza / Salidas a la baja)</h3>
+                    <div style="position: relative; height: 320px; width: 100%;">
+                        <canvas id="graficaFinanzas"></canvas>
+                    </div>
+                </div>
+
+                <!-- HISTORIAL FINANCIERO -->
+                <div class="grid-2">
+                    <div>
+                        <h3 style="font-size: 15px; margin-bottom: 10px; color: #2c3e50;">Historial de Entradas</h3>
+                        <div style="overflow-x: auto; max-height: 250px; overflow-y: auto;">
+                            <table>
+                                <thead>
+                                    <tr><th>Fecha</th><th>Tipo / Detalle</th><th>Monto</th></tr>
+                                </thead>
+                                <tbody id="tabla-entradas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 15px; margin-bottom: 10px; color: #2c3e50;">Historial de Salidas y Gastos</h3>
+                        <div style="overflow-x: auto; max-height: 250px; overflow-y: auto;">
+                            <table>
+                                <thead>
+                                    <tr><th>Fecha</th><th>Concepto / Tipo</th><th>Monto</th></tr>
+                                </thead>
+                                <tbody id="tabla-salidas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN CONFIGURACIÓN -->
+            <section id="sec-configuracion" class="section-content hidden">
+                <h2>Configuración de Usuarios del Sistema</h2>
+                <p class="subtitle">Administre quiénes pueden acceder a la aplicación</p>
+
+                <form id="form-usuario" style="max-width: 400px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label>Nuevo Usuario</label>
+                        <input type="text" id="nuevo-user" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="nuevo-pass" required>
+                    </div>
+                    <button type="submit" style="background-color: #8e44ad;">Crear Operador</button>
+                </form>
+
+                <h3 style="font-size: 15px; margin-bottom: 10px; color: #2c3e50;">Usuarios Registrados:</h3>
+                <div id="lista-usuarios-sistema"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let usuariosDB = [{ usuario: 'vale', clave: '1234' }];
+        let miembrosDB = [];
+        let eventosDB = [];
+        let entradasDB = [];
+        let salidasDB = [];
+        let miGrafica = null;
+
+        let fechaActualCalendario = new Date();
+        const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const userDisplay = document.getElementById('user-display');
+
+        function cambiarSeccion(seccion) {
+            document.querySelectorAll('main section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(`sec-${seccion}`).classList.remove('hidden');
+            document.getElementById(`nav-${seccion}`).classList.add('active');
+
+            if (seccion === 'calendario') renderizarCalendario();
+            if (seccion === 'finanzas') {
+                actualizarSelectMiembrosDiezmo();
+                actualizarResumenFinanciero();
+            }
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value.trim().toLowerCase();
+            const p = document.getElementById('password').value.trim();
+
+            const valido = (u === 'vale' && p === '1234') || usuariosDB.find(x => x.usuario === u && x.clave === p);
+            
+            if (valido) {
+                loginScreen.classList.add('hidden');
+                dashboardScreen.classList.remove('hidden');
+                userDisplay.textContent = u;
+                inicializarSelectoresCalendario();
+                
+                const hoyStr = new Date().toISOString().split('T')[0];
+                document.getElementById('en-fecha').value = hoyStr;
+                document.getElementById('sal-fecha').value = hoyStr;
+                renderizarTodo();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        function cerrarSesion() {
+            dashboardScreen.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function calcularEdad(fechaNacimiento) {
+            const hoy = new Date();
+            const cumple = new Date(fechaNacimiento + 'T00:00:00');
+            let edad = hoy.getFullYear() - cumple.getFullYear();
+            const m = hoy.getMonth() - cumple.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) edad--;
+            return edad;
+        }
+
+        function verificarEstadoCivil() {
+            const estado = document.getElementById('m-estado-civil').value;
+            const grupoConyuge = document.getElementById('grupo-conyuge');
+            if (estado === 'Casado/a') {
+                grupoConyuge.classList.remove('hidden');
+            } else {
+                grupoConyuge.classList.add('hidden');
+            }
+        }
+
+        // Miembros
+        document.getElementById('form-miembro').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('m-nombre').value.trim();
+            const apellido1 = document.getElementById('m-apellido1').value.trim();
+            const apellido2 = document.getElementById('m-apellido2').value.trim();
+            const estadoCivil = document.getElementById('m-estado-civil').value;
+            const conyuge = estadoCivil === 'Casado/a' ? document.getElementById('m-conyuge').value.trim() : 'Ninguno';
+
+            const nombreCompleto = `${nombre} ${apellido1} ${apellido2}`.trim();
+
+            miembrosDB.push({
+                nombreCompleto: nombreCompleto,
+                cedula: document.getElementById('m-cedula').value,
+                sexo: document.getElementById('m-sexo').value,
+                nacimiento: document.getElementById('m-nacimiento').value,
+                estadoCivil: estadoCivil,
+                conyuge: conyuge,
+                nacidoIglesia: document.getElementById('m-nacido-iglesia').value
+            });
+
+            document.getElementById('form-miembro').reset();
+            document.getElementById('grupo-conyuge').classList.add('hidden');
+            renderizarMiembros();
+            actualizarSelectMiembrosDiezmo();
+            alert('Miembro registrado correctamente.');
+        });
+
+        function renderizarMiembros() {
+            const tbody = document.getElementById('tabla-miembros');
+            tbody.innerHTML = '';
+            miembrosDB.forEach(m => {
+                const infoCivil = m.estadoCivil === 'Casado/a' ? `Casado/a con: <b>${m.conyuge}</b>` : 'Soltero/a';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${m.nombreCompleto}</b><br><small style="color:#777">Sexo: ${m.sexo}</small></td>
+                        <td>${m.cedula}</td>
+                        <td>${calcularEdad(m.nacimiento)} años</td>
+                        <td>${infoCivil}</td>
+                    </tr>`;
+            });
+        }
+
+        function actualizarSelectMiembrosDiezmo() {
+            const sel = document.getElementById('en-persona-select');
+            sel.innerHTML = '';
+            if (miembrosDB.length === 0) {
+                sel.innerHTML = '<option value="">(No hay miembros registrados aún)</option>';
+                return;
+            }
+            miembrosDB.forEach(m => {
+                sel.innerHTML += `<option value="${m.nombreCompleto}">${m.nombreCompleto} (C.I: ${m.cedula})</option>`;
+            });
+        }
+
+        // Calendario
+        function inicializarSelectoresCalendario() {
+            const selectMes = document.getElementById('select-mes');
+            const selectAnio = document.getElementById('select-anio');
+            selectMes.innerHTML = '';
+            nombresMeses.forEach((m, idx) => selectMes.innerHTML += `<option value="${idx}">${m}</option>`);
+            selectAnio.innerHTML = '';
+            const anioActual = new Date().getFullYear();
+            for (let a = anioActual - 5; a <= anioActual + 10; a++) selectAnio.innerHTML += `<option value="${a}">${a}</option>`;
+        }
+
+        function moverMes(delta) {
+            fechaActualCalendario.setMonth(fechaActualCalendario.getMonth() + delta);
+            renderizarCalendario();
+        }
+
+        function cambiarMesAnioDirecto() {
+            fechaActualCalendario.setMonth(parseInt(document.getElementById('select-mes').value));
+            fechaActualCalendario.setFullYear(parseInt(document.getElementById('select-anio').value));
+            renderizarCalendario();
+        }
+
+        function renderizarCalendario() {
+            const mes = fechaActualCalendario.getMonth();
+            const anio = fechaActualCalendario.getFullYear();
+            document.getElementById('cal-title').textContent = `${nombresMeses[mes]} ${anio}`;
+            document.getElementById('select-mes').value = mes;
+            document.getElementById('select-anio').value = anio;
+
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].forEach(d => grid.innerHTML += `<div class="cal-day-head">${d}</div>`);
+
+            const primerDiaIndex = new Date(anio, mes, 1).getDay();
+            const totalDias = new Date(anio, mes + 1, 0).getDate();
+            for (let i = 0; i < primerDiaIndex; i++) grid.innerHTML += `<div class="cal-day-cell empty"></div>`;
+
+            const hoy = new Date();
+            for (let d = 1; d <= totalDias; d++) {
+                const fechaISO = `${anio}-${String(mes + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const tieneEvento = eventosDB.some(e => e.fecha === fechaISO);
+                const tieneCumple = miembrosDB.some(m => {
+                    const p = m.nacimiento.split('-');
+                    return parseInt(p[1]) === (mes + 1) && parseInt(p[2]) === d;
+                });
+                const esHoy = (hoy.getDate() === d && hoy.getMonth() === mes && hoy.getFullYear() === anio);
+
+                grid.innerHTML += `
+                    <div class="cal-day-cell ${esHoy ? 'today' : ''}" onclick="mostrarDetalleDia('${fechaISO}')">
+                        <span>${d}</span>
+                        <div class="badge-dots">
+                            ${tieneEvento ? '<div class="dot-event"></div>' : ''}
+                            ${tieneCumple ? '<div class="dot-cumple"></div>' : ''}
+                        </div>
+                    </div>`;
+            }
+            mostrarDetalleMes(mes, anio);
+        }
+
+        function mostrarDetalleMes(mes, anio) {
+            const contenedor = document.getElementById('lista-detalles-dia');
+            document.getElementById('detalle-fecha-titulo').textContent = `Actividades de ${nombresMeses[mes]} ${anio}`;
+            contenedor.innerHTML = '';
+            let lista = [];
+
+            eventosDB.forEach(e => {
+                const p = e.fecha.split('-');
+                if (parseInt(p[1]) === (mes + 1) && parseInt(p[0]) === anio) lista.push({ titulo: `📌 ${e.titulo}`, fecha: e.fecha, tipo: 'evento' });
+            });
+            miembrosDB.forEach(m => {
+                const p = m.nacimiento.split('-');
+                if (parseInt(p[1]) === (mes + 1)) lista.push({ titulo: `🎂 Cumpleaños de ${m.nombreCompleto}`, fecha: `${anio}-${p[1]}-${p[2]}`, tipo: 'cumple' });
+            });
+
+            lista.sort((a,b) => a.fecha.localeCompare(b.fecha));
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color:#888; text-align:center;">No hay actividades en este mes.</p>';
+                return;
+            }
+            lista.forEach(item => {
+                contenedor.innerHTML += `<div style="background:white; padding:8px; border-radius:6px; margin-bottom:6px; border-left: 4px solid ${item.tipo==='cumple'?'#e74c3c':'#3498db'}; display:flex; justify-content:space-between;"><span>${item.titulo}</span><strong>${item.fecha}</strong></div>`;
+            });
+        }
+
+        function mostrarDetalleDia(fechaISO) {
+            const contenedor = document.getElementById('lista-detalles-dia');
+            document.getElementById('detalle-fecha-titulo').textContent = `Detalles del día: ${fechaISO}`;
+            document.getElementById('ev-fecha').value = fechaISO;
+            contenedor.innerHTML = '';
+            let lista = [];
+
+            eventosDB.forEach(e => { if (e.fecha === fechaISO) lista.push(`📌 ${e.titulo}`); });
+            miembrosDB.forEach(m => {
+                const p = m.nacimiento.split('-');
+                const fP = fechaISO.split('-');
+                if (parseInt(p[1]) === parseInt(fP[1]) && parseInt(p[2]) === parseInt(fP[2])) lista.push(`🎂 Cumpleaños de ${m.nombreCompleto}`);
+            });
+
+            if (lista.length === 0) {
+                contenedor.innerHTML = '<p style="color:#888; text-align:center;">Sin eventos en este día.</p>';
+                return;
+            }
+            lista.forEach(t => contenedor.innerHTML += `<div style="background:white; padding:8px; border-radius:6px; margin-bottom:6px; font-weight:bold;">${t}</div>`);
+        }
+
+        document.getElementById('form-evento').addEventListener('submit', (e) => {
+            e.preventDefault();
+            eventosDB.push({ titulo: document.getElementById('ev-titulo').value, fecha: document.getElementById('ev-fecha').value });
+            document.getElementById('form-evento').reset();
+            renderizarCalendario();
+            alert('Evento registrado.');
+        });
+
+        // FINANZAS
+        function verificarTipoEntrada() {
+            const tipo = document.getElementById('en-tipo').value;
+            const grupo = document.getElementById('grupo-diezmo-persona');
+            if (tipo === 'Diezmo') grupo.classList.remove('hidden');
+            else grupo.classList.add('hidden');
+        }
+
+        function actualizarModoSalida() {
+            const modo = document.getElementById('sal-tipo-frecuencia').value;
+            const grupoCuotas = document.getElementById('grupo-num-cuotas');
+            if (modo === 'cuotas') {
+                grupoCuotas.classList.remove('hidden');
+            } else {
+                grupoCuotas.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('form-entrada').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('en-tipo').value;
+            const persona = document.getElementById('en-persona-select').value;
+            const monto = parseFloat(document.getElementById('en-monto').value);
+            const fecha = document.getElementById('en-fecha').value;
+
+            let detalle = tipo;
+            if (tipo === 'Diezmo' && persona) detalle = `Diezmo de: ${persona}`;
+
+            entradasDB.push({ fecha, detalle, monto });
+            document.getElementById('form-entrada').reset();
+            document.getElementById('en-fecha').value = new Date().toISOString().split('T')[0];
+            verificarTipoEntrada();
+            actualizarResumenFinanciero();
+            alert('Entrada guardada correctamente.');
+        });
+
+        document.getElementById('form-salida').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const concepto = document.getElementById('sal-concepto-input').value;
+            const modo = document.getElementById('sal-tipo-frecuencia').value;
+            const montoTotal = parseFloat(document.getElementById('sal-monto').value);
+            const fechaInicio = document.getElementById('sal-fecha').value;
+
+            if (modo === 'cuotas') {
+                const numCuotas = parseInt(document.getElementById('sal-cuotas').value) || 1;
+                const montoCuota = montoTotal / numCuotas;
+                let fechaObj = new Date(fechaInicio + 'T00:00:00');
+
+                for (let i = 1; i <= numCuotas; i++) {
+                    const fIso = fechaObj.toISOString().split('T')[0];
+                    salidasDB.push({
+                        fecha: fIso,
+                        concepto: `${concepto} (Cuota ${i}/${numCuotas})`,
+                        monto: montoCuota
+                    });
+                    fechaObj.setMonth(fechaObj.getMonth() + 1);
+                }
+            } else {
+                let tagModo = '';
+                if (modo === 'fija_mismo_monto') tagModo = ' (Mensual Fijo)';
+                if (modo === 'fija_distinto_monto') tagModo = ' (Mensual Variable)';
+                
+                salidasDB.push({
+                    fecha: fechaInicio,
+                    concepto: concepto + tagModo,
+                    monto: montoTotal
+                });
+            }
+
+            document.getElementById('form-salida').reset();
+            document.getElementById('sal-fecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('grupo-num-cuotas').classList.add('hidden');
+            actualizarResumenFinanciero();
+            alert('Salida registrada con éxito.');
+        });
+
+        function actualizarResumenFinanciero() {
+            let totalEntradas = 0;
+            const tEntradas = document.getElementById('tabla-entradas');
+            tEntradas.innerHTML = '';
+            entradasDB.forEach(en => {
+                totalEntradas += en.monto;
+                tEntradas.innerHTML += `<tr><td>${en.fecha}</td><td>${en.detalle}</td><td style="color:#27ae60; font-weight:bold;">+$${en.monto.toFixed(2)}</td></tr>`;
+            });
+
+            let totalSalidas = 0;
+            const tSalidas = document.getElementById('tabla-salidas');
+            tSalidas.innerHTML = '';
+            salidasDB.forEach(sal => {
+                totalSalidas += sal.monto;
+                tSalidas.innerHTML += `<tr><td>${sal.fecha}</td><td>${sal.concepto}</td><td style="color:#e74c3c; font-weight:bold;">-$${sal.monto.toFixed(2)}</td></tr>`;
+            });
+
+            document.getElementById('res-entradas').textContent = `$${totalEntradas.toFixed(2)}`;
+            document.getElementById('res-salidas').textContent = `$${totalSalidas.toFixed(2)}`;
+            
+            const balance = totalEntradas - totalSalidas;
+            const balEl = document.getElementById('res-balance');
+            balEl.textContent = `$${balance.toFixed(2)}`;
+            balEl.style.color = balance >= 0 ? '#2c3e50' : '#e74c3c';
+
+            renderizarGraficaLineal();
+        }
+
+        // GRÁFICA LINEAL DE TENDENCIA (ENTRADAS SUBEN / SALIDAS BAJAN)
+        function renderizarGraficaLineal() {
+            const ctx = document.getElementById('graficaFinanzas').getContext('2d');
+            
+            // Recopilar todas las fechas únicas ordenadas
+            let fechasSet = new Set();
+            entradasDB.forEach(e => fechasSet.add(e.fecha));
+            salidasDB.forEach(s => fechasSet.add(s.fecha));
+            let fechasOrdenadas = Array.from(fechasSet).sort();
+
+            if (fechasOrdenadas.length === 0) {
+                fechasOrdenadas = [new Date().toISOString().split('T')[0]];
+            }
+
+            let saldoAcumulado = 0;
+            let datosLineales = [];
+            let datosEntradas = [];
+            let datosSalidas = [];
+
+            fechasOrdenadas.forEach(f => {
+                let entDia = 0;
+                entradasDB.filter(e => e.fecha === f).forEach(e => { entDia += e.monto; });
+
+                let salDia = 0;
+                salidasDB.filter(s => s.fecha === f).forEach(s => { salDia += s.monto; });
+
+                saldoAcumulado += (entDia - salDia);
+                datosLineales.push(saldoAcumulado);
+                datosEntradas.push(entDia);
+                datosSalidas.push(-salDia); // Salidas en negativo para que la curva baje
+            });
+
+            if (miGrafica) miGrafica.destroy();
+
+            miGrafica = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fechasOrdenadas,
+                    datasets: [
+                        {
+                            label: 'Tendencia de Balance (Curva Temporal)',
+                            data: datosLineales,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: function(context) {
+                                    if (context.tick.value === 0) return '#e74c3c'; // Línea base roja
+                                    return '#ecf0f1';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Config Usuarios
+        document.getElementById('form-usuario').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('nuevo-user').value;
+            const p = document.getElementById('nuevo-pass').value;
+            if(usuariosDB.some(x => x.usuario === u)) { alert('El usuario ya existe.'); return; }
+            usuariosDB.push({ usuario: u, clave: p });
+            document.getElementById('form-usuario').reset();
+            renderizarUsuariosSistema();
+            alert('Usuario creado.');
+        });
+
+        function renderizarUsuariosSistema() {
+            const div = document.getElementById('lista-usuarios-sistema');
+            div.innerHTML = '';
+            usuariosDB.forEach(u => div.innerHTML += `<div style="background:#f8f9fa; padding:8px; border-radius:6px; margin-bottom:5px; font-size:14px;">👤 <b>${u.usuario}</b></div>`);
+        }
+
+        function renderizarTodo() {
+            renderizarMiembros();
+            renderizarCalendario();
+            renderizarUsuariosSistema();
+            actualizarSelectMiembrosDiezmo();
+            actualizarResumenFinanciero();
+        }
+    </script>
+</body>
+</html>
