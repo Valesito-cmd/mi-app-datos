@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión</title>
+    <title>Sistema de Gestión - Asambleas de Dios</title>
     <style>
         * {
             box-sizing: border-box;
@@ -28,23 +28,33 @@
             padding: 30px;
             width: 100%;
             max-width: 450px;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 180px;
+            height: auto;
+            border-radius: 8px;
         }
 
         h2 {
             margin-bottom: 8px;
             color: #2c3e50;
-            text-align: center;
         }
 
         p.subtitle {
             color: #7f8c8d;
             font-size: 14px;
-            text-align: center;
             margin-bottom: 24px;
         }
 
         .form-group {
             margin-bottom: 18px;
+            text-align: left;
         }
 
         label {
@@ -104,7 +114,6 @@
         .error-message {
             color: #e74c3c;
             font-size: 14px;
-            text-align: center;
             margin-bottom: 15px;
         }
 
@@ -113,6 +122,7 @@
             margin-top: 20px;
             border-top: 1px solid #ecf0f1;
             padding-top: 15px;
+            text-align: left;
         }
 
         .user-item {
@@ -136,6 +146,11 @@
 
     <!-- 1. PANTALLA DE INICIO DE SESIÓN -->
     <div id="login-screen" class="card">
+        <div class="logo-container">
+            <!-- Logotipo incorporado -->
+            <img src="logotipo asamblea de Dios.png" alt="Logotipo Asambleas de Dios">
+        </div>
+        
         <h2>¡Bienvenido!</h2>
         <p class="subtitle">Ingresa tus datos para acceder al sistema</p>
         
@@ -154,8 +169,8 @@
             
             <button type="submit">Iniciar Sesión</button>
         </form>
-        <p style="font-size:12px; color:#95a5a6; text-align:center; margin-top:15px;">
-            (Prueba con Usuario: <b>vale</b> | Clave: <b>1234</b>)
+        <p style="font-size:12px; color:#95a5a6; margin-top:15px;">
+            (Usuario: <b>vale</b> | Clave: <b>1234</b>)
         </p>
     </div>
 
@@ -166,7 +181,7 @@
 
         <!-- Formulario para agregar nuevos usuarios -->
         <form id="add-user-form">
-            <h3 style="font-size: 16px; margin-bottom: 12px; color: #2c3e50;">Agregar Nuevo Usuario</h3>
+            <h3 style="font-size: 16px; margin-bottom: 12px; color: #2c3e50; text-align: left;">Agregar Nuevo Usuario</h3>
             
             <div class="form-group">
                 <label for="new-username">Nuevo Usuario</label>
@@ -238,7 +253,7 @@
                 welcomeTitle.textContent = `¡Hola, ${usuarioActual}!`;
                 renderizarUsuarios();
             } else {
-                loginError.classList.remove('hidden');
+                loginError.classList.add('hidden');
             }
         });
 
